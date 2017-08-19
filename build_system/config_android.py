@@ -27,25 +27,71 @@ android_config.set_file_abis({
 #-----------------------------------------------------------------------
 def build_node_js(config):
     return [
-        """android-gcc-toolchain $ARCH --api 17 --host gcc-lpthread -C \
-            sh -c \"                \\
-            cd ./node;              \\
-            ./configure             \\
-            --without-intl          \\
-            --without-inspector     \\
-            --dest-cpu=$ARCH        \\
-            --dest-os=$PLATFORM     \\
-            --without-snapshot      \\
-            --enable-static &&      \\
-            CFLAGS=-fPIC CXXFLAGS=-fPIC make -j4\"  \
-            """,
+        "cd ./node",
+
+        "export ANDROID_NDK_NAME=android-ndk-r16-beta1",
+        "export ANDROID_NDK_HOME=~/$ANDROID_NDK_NAME/",
+        "export TOOLCHAIN=/tmp/android-toolchain",
+
+        "export CC_host=gcc",
+        "export CXX_host=g++",
+        "export AR_host=ar",
+        "export LINK_host=g++",
+
+        "export PATH=/tmp/android-toolchain/bin:$PATH",
+
+        "export AR=/tmp/android-toolchain/bin/i686-linux-android-ar",
+        "export CC=/tmp/android-toolchain/bin/clang",
+        "export CXX=/tmp/android-toolchain/bin/clang++",
+        "export LINK=/tmp/android-toolchain/bin/clang++",
+
+        # NOTE: DHAVE_PTHREAD_COND_TIMEDWAIT_MONOTONIC only needed Pre Android platform 21
+        "export CFLAGS=\"-fPIC -DHAVE_PTHREAD_COND_TIMEDWAIT_MONOTONIC\"",
+        "export CXXFLAGS=\"-fPIC -DHAVE_PTHREAD_COND_TIMEDWAIT_MONOTONIC\"",
+        """ \
+        export GYP_DEFINES="\
+            target_arch=ia32 \
+            v8_target_arch=ia32 \
+            android_target_arch=ia32 \
+            host_os=linux OS=android" \
+        """,
+        """ \
+            ./configure             \
+            --dest-cpu=ia32        \
+            --dest-os=$PLATFORM     \
+            --without-snapshot      \
+            --without-inspector     \
+            --without-intl          \
+            --openssl-no-asm        \
+            --enable-static         \
+        """,
+        # "make clean",
+        "make -j4 BUILDTYPE=Release",
     ]
 
 android_config.build_step(c.build_node_js, build_node_js)
+# def build_node_js(config):
+#     return [
+#         """android-gcc-toolchain $ARCH --api 17 --stl libc++ --host gcc-lpthread -C \
+#             sh -c \"                \\
+#             cd ./node;              \\
+#             ./configure             \\
+#             --without-intl          \\
+#             --without-inspector     \\
+#             --dest-cpu=$ARCH        \\
+#             --dest-os=$PLATFORM     \\
+#             --without-snapshot      \\
+#             --enable-static &&      \\
+#             CFLAGS=-fPIC CXXFLAGS=-fPIC make -j4\"  \
+#             """,
+#     ]
+
+# android_config.build_step(c.build_node_js, build_node_js)
 #-----------------------------------------------------------------------
 def build_j2v8_cmake(config):
     cmake_vars = cmu.setAllVars(config)
     cmake_toolchain = cmu.setToolchain("$BUILD_CWD/docker/android/android.$ARCH.toolchain.cmake")
+    # cmake_toolchain = cmu.setToolchain("/temp/docker/android/android-ndk-r16-beta1-canary/build/cmake/android.toolchain.cmake")
 
     return \
         u.mkdir(u.cmake_out_dir) + \
@@ -67,7 +113,8 @@ android_config.build_step(c.build_j2v8_jni, u.build_j2v8_jni)
 def build_j2v8_cpp(config):
     return [
         "cd " + u.cmake_out_dir,
-        "make -j4",
+        "make clean",
+        "VERBOSE=1 make -j4",
     ]
 
 android_config.build_step(c.build_j2v8_cpp, build_j2v8_cpp)

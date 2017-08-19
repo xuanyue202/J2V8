@@ -3,8 +3,10 @@ ARG sys_image=debian:jessie
 
 FROM $sys_image
 
+RUN echo Using base-image: $sys_image
+
 RUN mkdir -p /temp/docker/shared/
-WORKDIR /temp/docker/shared/
+# WORKDIR /temp/docker/shared/
 
 # NOTE: copy shared scripts and run them separately
 # this helps when changing commands only in a single script,
@@ -12,26 +14,39 @@ WORKDIR /temp/docker/shared/
 # but just the ones that were affected
 
 COPY ./shared/install.debian.packages.sh /temp/docker/shared
+WORKDIR /temp/docker/shared/
 RUN ./install.debian.packages.sh
+
+# RUN apt-get -qq install -y bzip2
+
+# WORKDIR /temp/docker/android/
+# ADD ./android/android-ndk-4280707-linux-x86_64.tar /temp/docker/android/
+
+WORKDIR /temp/docker/android/
+RUN curl -O http://www.xsite.io/downloads/android-ndk-4280707-linux-x86_64.tar && \
+    tar -xvf android-ndk-4280707-linux-x86_64.tar && \
+    rm -rf android-ndk-4280707-linux-x86_64.tar
+# COPY ./android/android-ndk-4280707-linux-x86_64.tar /temp/docker/android/
+
+ENV NDK /temp/docker/android/android-ndk-r16-beta1-canary
+RUN $NDK/build/tools/make_standalone_toolchain.py \
+    --arch x86 --api 17 --stl=libc++ --install-dir /tmp/android-toolchain
+
+ENV NDK "/tmp/android-toolchain"
+# ENV PATH "$PATH:/tmp/android-toolchain/bin:$NDK"
+
+# RUN ls /tmp/android-toolchain/bin
 
 # install the heaviest dependencies first
 # (this keeps the big things cached in docker, even if we need to modify one of the shell scripts
 # of one of the lighter dependencies below)
-ENV NDK_VERSION "r13b"
-ENV NDK_NAME "android-ndk-$NDK_VERSION-linux-x86_64"
-RUN echo "Preparing Android NDK..." && \
-    mkdir -p /build && \
-    cd /build && \
-    curl -fSOL https://dl.google.com/android/repository/$NDK_NAME.zip && \
-    unzip $NDK_NAME.zip && \
-    rm $NDK_NAME.zip
 
-RUN echo "Preparing Android GCC-Toolchain..." && \
-    mkdir -p /build && \
-    cd /build && \
-    git clone https://github.com/sjitech/android-gcc-toolchain 
-ENV NDK "/build/android-ndk-$NDK_VERSION"
-ENV PATH "$PATH:/build/android-gcc-toolchain:$NDK"
+# ENV NDK "/build/android-ndk-$NDK_VERSION"
+# ENV PATH "$PATH:/build/android-gcc-toolchain:$NDK"
+
+WORKDIR /temp/docker/shared/
+
+# RUN apt-get -qq install -y python-openssl
 
 RUN echo "Preparing Android SDK..." && \
     wget -qO- http://dl.google.com/android/android-sdk_r23-linux.tgz | \

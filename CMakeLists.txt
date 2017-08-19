@@ -181,8 +181,17 @@ source_group("" FILES ${src_files})
 set(CMAKE_CXX_STANDARD 11)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wno-unused-function -Wno-unused-variable -O3 -funroll-loops -ftree-vectorize -ffast-math -fpermissive -fPIC ")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-unused-function -Wno-unused-variable -O3 -funroll-loops -ftree-vectorize -ffast-math -fpermissive -fPIC ")
+    # Node.js v7.x
+    # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wno-unused-function -Wno-unused-variable -O3 -funroll-loops -ftree-vectorize -ffast-math -fpermissive -fPIC ")
+    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-unused-function -Wno-unused-variable -O3 -funroll-loops -ftree-vectorize -ffast-math -fpermissive -fPIC ")
+
+    # Node.js v8.x
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -stdlib=libc++ -std=c++11 -fPIC")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++ -std=c++11 -fPIC")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -static-libstdc++")
+
+    # NDK libs path
+    link_directories(/temp/docker/android/android-ndk-r16-beta1-canary/sources/cxx-stl/llvm-libc++/libs/x86)
 endif()
 
 # remove the MinSizeRel and RelWithDebInfo configurations

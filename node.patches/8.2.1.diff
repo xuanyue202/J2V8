@@ -1,0 +1,121 @@
+diff --git a/common.gypi b/common.gypi
+index ea08e803..fa94c9f4 100644
+--- a/common.gypi
++++ b/common.gypi
+@@ -189,7 +189,7 @@
+     'msvs_settings': {
+       'VCCLCompilerTool': {
+         'StringPooling': 'true', # pool string literals
+-        'DebugInformationFormat': 3, # Generate a PDB
++        'DebugInformationFormat': 0, # Generate a PDB
+         'WarningLevel': 3,
+         'BufferSecurityCheck': 'true',
+         'ExceptionHandling': 0, # /EHsc
+diff --git a/deps/cares/common.gypi b/deps/cares/common.gypi
+index 609ad62a..d714cdd7 100644
+--- a/deps/cares/common.gypi
++++ b/deps/cares/common.gypi
+@@ -80,7 +80,7 @@
+     'msvs_settings': {
+       'VCCLCompilerTool': {
+         'StringPooling': 'true', # pool string literals
+-        'DebugInformationFormat': 3, # Generate a PDB
++        'DebugInformationFormat': 0, # Generate a PDB
+         'WarningLevel': 3,
+         'BufferSecurityCheck': 'true',
+         'ExceptionHandling': 1, # /EHsc
+diff --git a/deps/uv/common.gypi b/deps/uv/common.gypi
+index ec482340..807de0aa 100644
+--- a/deps/uv/common.gypi
++++ b/deps/uv/common.gypi
+@@ -93,7 +93,7 @@
+     'msvs_settings': {
+       'VCCLCompilerTool': {
+         'StringPooling': 'true', # pool string literals
+-        'DebugInformationFormat': 3, # Generate a PDB
++        'DebugInformationFormat': 0, # Generate a PDB
+         'WarningLevel': 3,
+         'BufferSecurityCheck': 'true',
+         'ExceptionHandling': 1, # /EHsc
+diff --git a/node.gyp b/node.gyp
+index b0e4676a..8f24ab8e 100644
+--- a/node.gyp
++++ b/node.gyp
+@@ -578,6 +578,26 @@
+         'OBJ_TRACING_PATH': '<(OBJ_DIR)/node/src/tracing',
+         'OBJ_SUFFIX': 'o',
+         'OBJ_SEPARATOR': '/',
++        'OBJ_FILES': [
++            '<(OBJ_GEN_PATH)<(OBJ_SEPARATOR)node_javascript.<(OBJ_SUFFIX)',
++            '<(OBJ_PATH)<(OBJ_SEPARATOR)node_debug_options.<(OBJ_SUFFIX)',
++            '<(OBJ_PATH)<(OBJ_SEPARATOR)async-wrap.<(OBJ_SUFFIX)',
++            '<(OBJ_PATH)<(OBJ_SEPARATOR)env.<(OBJ_SUFFIX)',
++            '<(OBJ_PATH)<(OBJ_SEPARATOR)node.<(OBJ_SUFFIX)',
++            '<(OBJ_PATH)<(OBJ_SEPARATOR)node_buffer.<(OBJ_SUFFIX)',
++            '<(OBJ_PATH)<(OBJ_SEPARATOR)node_i18n.<(OBJ_SUFFIX)',
++            '<(OBJ_PATH)<(OBJ_SEPARATOR)node_url.<(OBJ_SUFFIX)',
++            '<(OBJ_PATH)<(OBJ_SEPARATOR)util.<(OBJ_SUFFIX)',
++            '<(OBJ_PATH)<(OBJ_SEPARATOR)string_bytes.<(OBJ_SUFFIX)',
++            '<(OBJ_PATH)<(OBJ_SEPARATOR)string_search.<(OBJ_SUFFIX)',
++            '<(OBJ_PATH)<(OBJ_SEPARATOR)stream_base.<(OBJ_SUFFIX)',
++            '<(OBJ_PATH)<(OBJ_SEPARATOR)node_constants.<(OBJ_SUFFIX)',
++            '<(OBJ_PATH)<(OBJ_SEPARATOR)node_revert.<(OBJ_SUFFIX)',
++            '<(OBJ_TRACING_PATH)<(OBJ_SEPARATOR)agent.<(OBJ_SUFFIX)',
++            '<(OBJ_TRACING_PATH)<(OBJ_SEPARATOR)node_trace_buffer.<(OBJ_SUFFIX)',
++            '<(OBJ_TRACING_PATH)<(OBJ_SEPARATOR)node_trace_writer.<(OBJ_SUFFIX)',
++            '<(OBJ_TRACING_PATH)<(OBJ_SEPARATOR)trace_event.<(OBJ_SUFFIX)',
++        ],
+         'conditions': [
+           ['OS=="win"', {
+             'OBJ_SUFFIX': 'obj',
+@@ -617,27 +637,6 @@
+         '<(SHARED_INTERMEDIATE_DIR)', # for node_natives.h
+       ],
+ 
+-      'libraries': [
+-        '<(OBJ_GEN_PATH)<(OBJ_SEPARATOR)node_javascript.<(OBJ_SUFFIX)',
+-        '<(OBJ_PATH)<(OBJ_SEPARATOR)node_debug_options.<(OBJ_SUFFIX)',
+-        '<(OBJ_PATH)<(OBJ_SEPARATOR)async-wrap.<(OBJ_SUFFIX)',
+-        '<(OBJ_PATH)<(OBJ_SEPARATOR)env.<(OBJ_SUFFIX)',
+-        '<(OBJ_PATH)<(OBJ_SEPARATOR)node.<(OBJ_SUFFIX)',
+-        '<(OBJ_PATH)<(OBJ_SEPARATOR)node_buffer.<(OBJ_SUFFIX)',
+-        '<(OBJ_PATH)<(OBJ_SEPARATOR)node_i18n.<(OBJ_SUFFIX)',
+-        '<(OBJ_PATH)<(OBJ_SEPARATOR)node_url.<(OBJ_SUFFIX)',
+-        '<(OBJ_PATH)<(OBJ_SEPARATOR)util.<(OBJ_SUFFIX)',
+-        '<(OBJ_PATH)<(OBJ_SEPARATOR)string_bytes.<(OBJ_SUFFIX)',
+-        '<(OBJ_PATH)<(OBJ_SEPARATOR)string_search.<(OBJ_SUFFIX)',
+-        '<(OBJ_PATH)<(OBJ_SEPARATOR)stream_base.<(OBJ_SUFFIX)',
+-        '<(OBJ_PATH)<(OBJ_SEPARATOR)node_constants.<(OBJ_SUFFIX)',
+-        '<(OBJ_PATH)<(OBJ_SEPARATOR)node_revert.<(OBJ_SUFFIX)',
+-        '<(OBJ_TRACING_PATH)<(OBJ_SEPARATOR)agent.<(OBJ_SUFFIX)',
+-        '<(OBJ_TRACING_PATH)<(OBJ_SEPARATOR)node_trace_buffer.<(OBJ_SUFFIX)',
+-        '<(OBJ_TRACING_PATH)<(OBJ_SEPARATOR)node_trace_writer.<(OBJ_SUFFIX)',
+-        '<(OBJ_TRACING_PATH)<(OBJ_SEPARATOR)trace_event.<(OBJ_SUFFIX)',
+-      ],
+-
+       'defines': [
+         # gtest's ASSERT macros conflict with our own.
+         'GTEST_DONT_DEFINE_ASSERT_EQ=1',
+@@ -661,6 +660,9 @@
+       ],
+ 
+       'conditions': [
++        ['node_target_type!="static_library"', {
++          'libraries': [ '<@(OBJ_FILES)' ],
++        }],
+         ['v8_enable_inspector==1', {
+           'sources': [
+             'test/cctest/test_inspector_socket.cc',
+diff --git a/src/node.h b/src/node.h
+index 596769a6..21dbc38d 100644
+--- a/src/node.h
++++ b/src/node.h
+@@ -433,7 +433,7 @@ extern "C" NODE_EXTERN void node_module_register(void* mod);
+ #ifdef NODE_SHARED_MODE
+ # define NODE_CTOR_PREFIX
+ #else
+-# define NODE_CTOR_PREFIX static
++# define NODE_CTOR_PREFIX
+ #endif
+ 
+ #if defined(_MSC_VER)

@@ -36,7 +36,7 @@ win32_config.set_file_abis({
 def build_node_js(config):
     return [
         "cd ./node",
-        "vcbuild.bat release $ARCH",
+        "vcbuild.bat release $ARCH static",
     ]
 
 win32_config.build_step(c.build_node_js, build_node_js)

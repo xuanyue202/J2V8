@@ -220,16 +220,6 @@ static void jsWindowObjectAccessor(Local<String> property,
   info.GetReturnValue().Set(info.GetIsolate()->GetCurrentContext()->Global());
 }
 
-class ShellArrayBufferAllocator : public v8::ArrayBuffer::Allocator {
- public:
-  virtual void* Allocate(size_t length) {
-    void* data = AllocateUninitialized(length);
-    return data == NULL ? data : memset(data, 0, length);
-  }
-  virtual void* AllocateUninitialized(size_t length) { return malloc(length); }
-  virtual void Free(void* data, size_t) { free(data); }
-};
-
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     JNIEnv *env;
     jint onLoad_err = -1;
@@ -307,8 +297,6 @@ JNIEXPORT void JNICALL Java_com_eclipsesource_v8_V8__1setFlags
     v8::V8::Initialize();
 }
 
-ShellArrayBufferAllocator array_buffer_allocator;
-
 #ifdef NODE_COMPATIBLE
 extern "C" {
     void _register_async_wrap(void);
@@ -338,6 +326,8 @@ extern "C" {
     void _register_tty_wrap(void);
     void _register_udp_wrap(void);
     void _register_uv(void);
+    void _register_inspector(void);
+    void _register_serdes(void);
   }
 #endif
 
@@ -384,6 +374,8 @@ JNIEXPORT void JNICALL Java_com_eclipsesource_v8_V8__1startNodeJS
     _register_tty_wrap();
     _register_udp_wrap();
     _register_uv();
+    _register_inspector();
+    _register_serdes();
   #endif
   }
   rt->uvLoop = uv_default_loop();
@@ -452,7 +444,8 @@ JNIEXPORT jlong JNICALL Java_com_eclipsesource_v8_V8__1createIsolate
  (JNIEnv *env, jobject v8, jstring globalAlias) {
   V8Runtime* runtime = new V8Runtime();
   v8::Isolate::CreateParams create_params;
-  create_params.array_buffer_allocator = &array_buffer_allocator;
+
+  create_params.array_buffer_allocator = v8::ArrayBuffer::Allocator::NewDefaultAllocator();
   runtime->isolate = v8::Isolate::New(create_params);
   runtime->locker = new Locker(runtime->isolate);
   v8::Isolate::Scope isolate_scope(runtime->isolate);
