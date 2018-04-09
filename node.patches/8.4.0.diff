@@ -1,0 +1,62 @@
+diff --git a/common.gypi b/common.gypi
+index 6677274..2776377 100644
+--- a/common.gypi
++++ b/common.gypi
+@@ -189,7 +189,7 @@
+     'msvs_settings': {
+       'VCCLCompilerTool': {
+         'StringPooling': 'true', # pool string literals
+-        'DebugInformationFormat': 3, # Generate a PDB
++        'DebugInformationFormat': 0, # Generate a PDB
+         'WarningLevel': 3,
+         'BufferSecurityCheck': 'true',
+         'ExceptionHandling': 0, # /EHsc
+diff --git a/deps/cares/common.gypi b/deps/cares/common.gypi
+index 609ad62..d714cdd 100644
+--- a/deps/cares/common.gypi
++++ b/deps/cares/common.gypi
+@@ -80,7 +80,7 @@
+     'msvs_settings': {
+       'VCCLCompilerTool': {
+         'StringPooling': 'true', # pool string literals
+-        'DebugInformationFormat': 3, # Generate a PDB
++        'DebugInformationFormat': 0, # Generate a PDB
+         'WarningLevel': 3,
+         'BufferSecurityCheck': 'true',
+         'ExceptionHandling': 1, # /EHsc
+diff --git a/deps/uv/common.gypi b/deps/uv/common.gypi
+index ec48234..807de0a 100644
+--- a/deps/uv/common.gypi
++++ b/deps/uv/common.gypi
+@@ -93,7 +93,7 @@
+     'msvs_settings': {
+       'VCCLCompilerTool': {
+         'StringPooling': 'true', # pool string literals
+-        'DebugInformationFormat': 3, # Generate a PDB
++        'DebugInformationFormat': 0, # Generate a PDB
+         'WarningLevel': 3,
+         'BufferSecurityCheck': 'true',
+         'ExceptionHandling': 1, # /EHsc
+diff --git a/node.gyp b/node.gyp
+index 81f549f..912deb1 100644
+--- a/node.gyp
++++ b/node.gyp
+@@ -631,7 +631,7 @@
+         '<(SHARED_INTERMEDIATE_DIR)', # for node_natives.h
+       ],
+ 
+-      'libraries': [
++      'OBJ_FILES': [
+         '<(OBJ_GEN_PATH)<(OBJ_SEPARATOR)node_javascript.<(OBJ_SUFFIX)',
+         '<(OBJ_PATH)<(OBJ_SEPARATOR)node_debug_options.<(OBJ_SUFFIX)',
+         '<(OBJ_PATH)<(OBJ_SEPARATOR)async-wrap.<(OBJ_SUFFIX)',
+@@ -666,6 +666,9 @@
+       ],
+ 
+       'conditions': [
++        ['node_target_type!="static_library"', {
++          'libraries': [ '<@(OBJ_FILES)' ],
++        }],
+         ['v8_enable_inspector==1', {
+           'sources': [
+             'test/cctest/test_inspector_socket.cc',

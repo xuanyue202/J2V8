@@ -16,6 +16,9 @@ configs = [
                   "arch": c.arch_x86,
                   "docker": True,
                   "node_enabled": True,
+                  # "sys_image": "debian:stretch",
+                  "sys_image": "ubuntu:zesty",
+                  "j2v8test": "-PtestClass=com.eclipsesource.v8.V8ArrayBufferTest",
             },
       },
       {

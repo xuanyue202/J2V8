@@ -1,8 +1,11 @@
 """Commonly used CMake CLI commands and argument-formatters"""
 
 # see: https://cmake.org/cmake/help/v2.8.8/cmake.html#opt:-Dvar:typevalue
-def setVar(var, value, type = "STRING"):
-    return " -D%(var)s:%(type)s=%(value)s " % locals()
+def setVar(var, value, type = None):
+    if not type:
+        return " -D%(var)s=%(value)s " % locals()
+    else:
+        return " -D%(var)s:%(type)s=%(value)s " % locals()
 
 def setTargetArch(config):
     return setVar("J2V8_TARGET_ARCH", config.file_abi)

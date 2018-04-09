@@ -33,19 +33,19 @@ function (get_njs_libs nodejs_dir config_name fail_on_missing_libs)
         # Node.js link libraries
         set (njs_libs
             # nodejs/build/$Config/lib
-            ${njs_build_lib}/standalone_inspector.lib
-            ${njs_build_lib}/v8_base_0.lib
-            ${njs_build_lib}/v8_base_1.lib
-            ${njs_build_lib}/v8_base_2.lib
-            ${njs_build_lib}/v8_base_3.lib
-            ${njs_build_lib}/v8_libbase.lib
-            ${njs_build_lib}/v8_libplatform.lib
-            ${njs_build_lib}/v8_libsampler.lib
-            ${njs_build_lib}/v8_nosnapshot.lib
-            ${njs_build_lib}/v8_snapshot.lib
+            # ${njs_build_lib}/standalone_inspector.lib
+            ${njs_extra_lib}/v8_base_0.lib
+            ${njs_extra_lib}/v8_base_1.lib
+            ${njs_extra_lib}/v8_base_2.lib
+            ${njs_extra_lib}/v8_base_3.lib
+            ${njs_extra_lib}/v8_libbase.lib
+            ${njs_extra_lib}/v8_libplatform.lib
+            ${njs_extra_lib}/v8_libsampler.lib
+            ${njs_extra_lib}/v8_nosnapshot.lib
+            # ${njs_build_lib}/v8_snapshot.lib
 
             # nodejs/build/$Config
-            ${njs_build}/mksnapshot.lib
+            # ${njs_build}/mksnapshot.lib
 
             # nodejs/$Config/lib
             ${njs_extra_lib}/cares.lib
@@ -62,7 +62,7 @@ function (get_njs_libs nodejs_dir config_name fail_on_missing_libs)
             ${njs_extra_lib}/zlib.lib
 
             # nodejs/$Config
-            ${njs_extra}/cctest.lib
+            # ${njs_extra}/cctest.lib
         )
 
         # verify that all required Node.js libs actually exist
@@ -132,6 +132,7 @@ function (get_njs_libs nodejs_dir config_name fail_on_missing_libs)
             ${njs_out_deps}/uv/libuv.a
             ${njs_out_deps}/openssl/libopenssl.a
             ${njs_out_deps}/http_parser/libhttp_parser.a
+            ${njs_out_deps}/nghttp2/libnghttp2.a # v8.x
             ${njs_out_deps}/gtest/libgtest.a
             ${njs_out_deps}/zlib/libzlib.a
             ${njs_out_deps}/cares/libcares.a
@@ -142,6 +143,9 @@ function (get_njs_libs nodejs_dir config_name fail_on_missing_libs)
             ${njs_out_v8}/libv8_libplatform.a
             ${njs_out_v8}/libv8_libbase.a
             ${njs_out_v8}/libv8_libsampler.a
+            # v8.x
+            ${njs_out_v8}/libv8_builtins_generators.a
+            ${njs_out_v8}/libv8_builtins_setup.a
         )
 
         # verify that all required Node.js libs actually exist
